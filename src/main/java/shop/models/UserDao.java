@@ -8,6 +8,8 @@ import javax.transaction.Transactional;
 
 import org.springframework.stereotype.Repository;
 
+import shop.utils.Utils;
+
 /**
  * This class is used to access data for the User entity.
  * Repository annotation allows the component scanning support to find and 
@@ -29,7 +31,7 @@ public class UserDao {
   /**
    * Save the user in the database.
    */
-  public void create(User user) {
+  public void create(User user) { Utils.logMethodName();
     entityManager.persist(user);
     return;
   }
@@ -37,7 +39,7 @@ public class UserDao {
   /**
    * Delete the user from the database.
    */
-  public void delete(User user) {
+  public void delete(User user) { Utils.logMethodName();
     if (entityManager.contains(user))
       entityManager.remove(user);
     else
@@ -49,20 +51,20 @@ public class UserDao {
    * Return all the users stored in the database.
    */
   @SuppressWarnings("unchecked")
-  public List<User> getAll() {
+  public List<User> getAll() { Utils.logMethodName();
     return entityManager.createQuery("from User").getResultList();
   }
   
   /**
    * Return the user having the passed email.
    */
-  public User getByEmail(String email) {
+  public User getByEmail(String email) { Utils.logMethodName();
     return (User) entityManager.createQuery("from User where email = :email")
 							        .setParameter("email", email)
 							        .getSingleResult();
   }
   
-  public User getByApiKey(String p_apikey) {
+  public User getByApiKey(String p_apikey) { Utils.logMethodName();
 	  return (User) entityManager.createQuery("from User where apikey = :apikey")
 		        .setParameter("apikey", p_apikey)
 		        .getSingleResult();
@@ -71,14 +73,14 @@ public class UserDao {
   /**
    * Return the user having the passed id.
    */
-  public User getById(long id) {
+  public User getById(long id) { Utils.logMethodName();
     return entityManager.find(User.class, id);
   }
 
   /**
    * Update the passed user in the database.
    */
-  public void update(User user) {
+  public void update(User user) { Utils.logMethodName();
     entityManager.merge(user);
     return;
   }

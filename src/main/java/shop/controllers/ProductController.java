@@ -20,16 +20,14 @@ import shop.utils.Utils;
  * Class ProductController
  */
 @Controller
+//access to the website from the same computer
 @CrossOrigin(origins = { "http://localhost:4200" } )
+//Test the access to the website from other computers in the same LAN 
+//@CrossOrigin(	origins = { "*" }, methods= {RequestMethod.GET, RequestMethod.POST, RequestMethod.DELETE, RequestMethod.PUT} )
 public class ProductController {
-
 	// ------------------------
 	// PUBLIC METHODS
 	// ------------------------
-
-	
-
-	
 	/**
 	 * Create a new product 
 	 */
@@ -151,9 +149,7 @@ public class ProductController {
 
 	// ------------------------
 	// PRIVATE FIELDS
-	// ------------------------
-
-	
+	// ------------------------	
 	@Autowired
 	private UserDao userDao;
 	

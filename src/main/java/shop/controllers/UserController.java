@@ -16,6 +16,7 @@ import shop.utils.Utils;
 
 /**
  * Class UserController
+ * Access to back-end server page limited to Angular front-end server 
  */
 @Controller
 @CrossOrigin(
@@ -28,7 +29,10 @@ public class UserController {
 	// ------------------------
 
 	/**
-	 * Create a new user 
+	 * User Authentication
+	 * @param email
+	 * @param password 
+	 * Access : everyone
 	 */
 	@RequestMapping(value = "/users/auth", method=RequestMethod.POST)
 	@ResponseBody
@@ -37,12 +41,12 @@ public class UserController {
 			@RequestParam(value="email") String p_email, 
 			@RequestParam(value="password") String p_password
 			
-	) {
+	) { Utils.logMethodName();
 		// TODO Auto-generated method stub
 		User current = userDao.getByEmail(p_email);
 		String encrypted = Utils.encrypt(p_password);
 		
-		if( current != null && current.getPassword().equals(encrypted) ) {
+		if( current != null && current.getPassword().equals(encrypted) ) { Utils.logMethodName();
 			return current.toString();
 		}
 	
@@ -53,6 +57,10 @@ public class UserController {
 	
 	/**
 	 * Create a new user 
+	 * @param email
+	 * @param name
+	 * @param password	
+	 * @return string Success as Json
 	 */
 	@RequestMapping(value = "/users/add", method=RequestMethod.POST)
 	@ResponseBody
@@ -60,7 +68,7 @@ public class UserController {
 			@RequestParam(value="email") String p_email, 
 			@RequestParam(value="name") String p_name, 
 			@RequestParam(value="password") String p_password
-	) {
+	) { Utils.logMethodName();
 		try 
 		{
 			User user = new User(
@@ -83,13 +91,16 @@ public class UserController {
 
 	/**
 	 * Delete the user
+	 * @param user_id
+	 * @param apikey
+	 * @return string Error as Json  
 	 */
 	@RequestMapping(value = "/users/remove", method=RequestMethod.DELETE)
 	@ResponseBody
 	public String delete(
 			@RequestParam(value="user_id") long p_userid, 
 			@RequestParam(value="apikey") String p_apikey
-	) {
+	) { Utils.logMethodName();
 		try {
 			
 			
@@ -99,7 +110,7 @@ public class UserController {
 			// si je suis un admin ou s'il s'agit de mon compte
 			if( currentUser.isAdmin() || 
 				( currentUser.getId() == toDeleteUser.getId() ) 
-			) {
+			) { Utils.logMethodName();
 				userDao.delete(toDeleteUser);
 			}
 			else {
@@ -107,7 +118,7 @@ public class UserController {
 			}
 			
 			
-		} catch (Exception ex) {
+		} catch (Exception ex) { Utils.logMethodName();
 			return Custom.getJsonError(Custom.DELETE_ERROR);
 		}
 		
@@ -116,29 +127,41 @@ public class UserController {
 
 	/**
 	 * Retrieve all users
+	 * @param apikey
+	 * @return string Error as Json
 	 */
 	@RequestMapping(value = "/users", method=RequestMethod.GET)
 	@ResponseBody
-
 	public String getAll(
 			@RequestParam(value="apikey") String p_apikey
-	) {
+	) { Utils.logMethodName();
 		try {
 			
 			User currentUser = userDao.getByApiKey(p_apikey);
 			
 			if( currentUser.isAdmin() )
-				return userDao.getAll().toString();
+			{
+				String p_users = userDao.getAll().toString();
+				System.out.println(p_users);
+				return p_users;
+			}
 			else
 				return Custom.getJsonError(Custom.BAD_ROLE_ERROR);
 			
-		} catch (Exception ex) {
+		} catch (Exception ex) { Utils.logMethodName();
 			return Custom.getJsonError(Custom.READ_ERROR);
 		}
 	}
 
 	/**
 	 * Update the user
+	 * @param user_id
+	 * @param apikey	 
+	 * @param email
+	 * @param name
+	 * @param password
+	 * @param admin	
+	 * @return string Error as Json
 	 */
 	@RequestMapping(value = "/users/update", method=RequestMethod.PUT)
 	@ResponseBody
@@ -149,20 +172,20 @@ public class UserController {
 			@RequestParam(value="name") String p_name, 
 			@RequestParam(value="password") String p_password, 
 			@RequestParam(value="admin", defaultValue="false" ) boolean p_admin
-	) {
+	) { Utils.logMethodName();
 		try {
 			User toUpdateUser 	= userDao.getById(p_userid);
 			User currentUser 	= userDao.getByApiKey(p_apikey);
 			
 			// si je suis un admin ou s'il s'agit de mon compte
-			if( currentUser.isAdmin() || currentUser.getId() == p_userid ) {
+			if( currentUser.isAdmin() || currentUser.getId() == p_userid ) { Utils.logMethodName();
 				
 				toUpdateUser.setEmail(p_email);
 				toUpdateUser.setName(p_name);
 				toUpdateUser.setPassword(Utils.encrypt(p_password));
 				
 				// seul l'admin peut accorder le droit d'amin
-				if( currentUser.isAdmin() ) {
+				if( currentUser.isAdmin() ) { Utils.logMethodName();
 					toUpdateUser.setAdmin( p_admin );
 				}
 				
@@ -172,7 +195,7 @@ public class UserController {
 			}
 			
 			
-		} catch (Exception ex) {
+		} catch (Exception ex) { Utils.logMethodName();
 			return Custom.getJsonError(Custom.UPDATE_ERROR);
 		}
 		return Custom.getJsonSuccess();
