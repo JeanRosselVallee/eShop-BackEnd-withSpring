@@ -117,8 +117,9 @@ public class UserController {
 
 		  MultiValueMap<String, String> body = 
 					new LinkedMultiValueMap<String, String>();					
-		  body.add("apikey", "9b943d3cd5694d12b788de17b0571df3649bccb2");
-		  body.add("user_id", creator.getId().toString() );
+		  //body.add("apikey", "9b943d3cd5694d12b788de17b0571df3649bccb2");
+		  body.add("apikey", 	creator.getApikey() );
+		  body.add("user_id", 	creator.getId().toString() );
 		  
 		  HttpEntity<MultiValueMap<String, String>> requestEntity = 
 					new HttpEntity<MultiValueMap<String, String>> (body, headers);

@@ -22,7 +22,9 @@ import shop.models.ProductDao;
  * Class CartController
  */
 @Controller
-@CrossOrigin(origins = { "http://localhost:4200" } )
+@CrossOrigin(
+		origins = { "http://localhost:4200" }, 
+		methods= {RequestMethod.GET, RequestMethod.POST, RequestMethod.DELETE, RequestMethod.PUT}) 
 public class CartController {
 
 	// ------------------------
@@ -41,13 +43,18 @@ public class CartController {
 		try 
 		{
 
-			User current = userDao.getByApiKey(p_apikey);
+			User creator = userDao.getByApiKey(p_apikey);
 
-			User owner = userDao.getById(p_userid);
-			// ToDo: Check that user exists before adding a cart w/ Null owner
+			User targetUser = userDao.getById(p_userid);
 			
-			if( current != null && current.isAdmin() ) { 
-				Cart cart = new Cart(owner);
+			if
+			( 
+					( creator != null  && targetUser != null )
+					&& 
+					( creator.isAdmin() || creator.getId() == targetUser.getId()  ) 
+			)
+			{ 
+				Cart cart = new Cart(targetUser);
 				System.out.println(cart);
 				cartDao.create(cart);
 			}
@@ -267,7 +274,7 @@ public class CartController {
 	/**
 	 * Update the cart
 	 */
-	@RequestMapping(value = "/carts/remove-product", method=RequestMethod.PUT)
+	@RequestMapping(value = "/carts/remove-product", method=RequestMethod.DELETE)
 	@ResponseBody
 	public String removeProductFromCart(
 			@RequestParam(value="apikey") String p_apikey, 

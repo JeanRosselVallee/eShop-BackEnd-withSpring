@@ -62,7 +62,7 @@ public class ProductController {
 	/**
 	 * Delete the product
 	 */
-	@RequestMapping(value = "/products/remove", method=RequestMethod.DELETE)
+	@RequestMapping(value = "/products/rem", method=RequestMethod.DELETE)
 	@ResponseBody
 	public String delete(
 			@RequestParam(value="product_id") long p_productid, 
