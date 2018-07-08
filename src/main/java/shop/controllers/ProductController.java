@@ -95,7 +95,6 @@ public class ProductController {
 	@ResponseBody
 
 	public String getAll() { Utils.logMethodName();
-		Utils.logMethodName();
 		try {
 			return productDao.getAll().toString();
 			

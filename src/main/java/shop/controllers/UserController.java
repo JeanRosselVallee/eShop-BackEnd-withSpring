@@ -1,18 +1,29 @@
 package shop.controllers;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
+import org.springframework.util.LinkedMultiValueMap;
+import org.springframework.util.MultiValueMap;
 import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.client.RestTemplate;
 
-
+import shop.models.Cart;
+import shop.models.CartDao;
 import shop.models.User;
 import shop.models.UserDao;
 import shop.utils.Custom;
 import shop.utils.Utils;
+import shop.controllers.CartController;
 
 /**
  * Class UserController
@@ -61,7 +72,9 @@ public class UserController {
 	 * @param name
 	 * @param password	
 	 * @return string Success as Json
+	 * A user and its cart are created at the same time
 	 */
+	
 	@RequestMapping(value = "/users/add", method=RequestMethod.POST)
 	@ResponseBody
 	public String create(	
@@ -69,9 +82,10 @@ public class UserController {
 			@RequestParam(value="name") String p_name, 
 			@RequestParam(value="password") String p_password
 	) { Utils.logMethodName();
+		User current;
 		try 
 		{
-			User user = new User(
+			current = new User(
 					p_email, 
 					p_name, 
 					Utils.encrypt(p_password), 
@@ -79,16 +93,47 @@ public class UserController {
 					false
 			);
 			
-			userDao.create(user);
+			userDao.create(current);
 		} 
 		catch (Exception ex) 
 		{
 			return Custom.getJsonError(Custom.CREATE_ERROR);
 		}
+
+		createCartAfterUser(current);
 		
 		return Custom.getJsonSuccess();
 	}
+	  
+	  
+	  private void createCartAfterUser(User creator)
+	  {
+	      final String target_uri = "http://localhost:8080/carts/add";
 
+	      RestTemplate  sentRequest = new RestTemplate ();
+		  
+	      HttpHeaders headers = new HttpHeaders();
+          headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
+
+		  MultiValueMap<String, String> body = 
+					new LinkedMultiValueMap<String, String>();					
+		  body.add("apikey", "9b943d3cd5694d12b788de17b0571df3649bccb2");
+		  body.add("user_id", creator.getId().toString() );
+		  
+		  HttpEntity<MultiValueMap<String, String>> requestEntity = 
+					new HttpEntity<MultiValueMap<String, String>> (body, headers);
+		  
+	      String result = 
+	    		  sentRequest.postForObject(
+					target_uri, 
+					requestEntity, 
+					String.class);
+
+	      System.out.println(result);
+	  }
+
+	
+	
 	/**
 	 * Delete the user
 	 * @param user_id
@@ -142,7 +187,7 @@ public class UserController {
 			if( currentUser.isAdmin() )
 			{
 				String p_users = userDao.getAll().toString();
-				System.out.println(p_users);
+				//System.out.println(p_users);
 				return p_users;
 			}
 			else

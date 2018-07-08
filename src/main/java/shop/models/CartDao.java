@@ -34,7 +34,7 @@ public class CartDao {
   /**
    * Save the cart in the database.
    */
-  public void create(Cart cart) {
+  public void create(Cart cart) {Utils.logMethodName();
     entityManager.persist(cart);
     return;
   }
@@ -42,7 +42,7 @@ public class CartDao {
   /**
    * Delete the cart from the database.
    */
-  public void delete(Cart cart) {
+  public void delete(Cart cart) {Utils.logMethodName();
     if (entityManager.contains(cart))
       entityManager.remove(cart);
     else
@@ -54,21 +54,21 @@ public class CartDao {
    * Return all the carts stored in the database.
    */
   @SuppressWarnings("unchecked")
-  public List<Cart> getAll() {
+  public List<Cart> getAll() {Utils.logMethodName();
     return entityManager.createQuery("from Cart").getResultList();
   }
 
   /**
    * Return the cart having the passed id.
    */
-  public Cart getById(long id) {
+  public Cart getById(long id) {Utils.logMethodName();
     return entityManager.find(Cart.class, id);
   }
 
   /**
    * Update the passed cart in the database.
    */
-  public void update(Cart cart) {
+  public void update(Cart cart) {Utils.logMethodName();
     entityManager.merge(cart);
     return;
   }
@@ -90,7 +90,7 @@ public class CartDao {
 	    	Long cart_id = selectedCart.getId() ;
 	        System.out.println( "cart_id=" + cart_id.toString() );
 	    	return cart_id ;
-	    } catch (final NoResultException nre) {
+	    } catch (final NoResultException nre) {Utils.logMethodName();
 			
 			// To Do Error Handling 
 			System.out.println("catched error");

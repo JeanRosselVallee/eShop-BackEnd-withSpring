@@ -40,13 +40,15 @@ public class CartController {
 	) { Utils.logMethodName();
 		try 
 		{
+
 			User current = userDao.getByApiKey(p_apikey);
+
 			User owner = userDao.getById(p_userid);
-			
 			// ToDo: Check that user exists before adding a cart w/ Null owner
 			
-			if( current != null && current.isAdmin() ) { Utils.logMethodName();
+			if( current != null && current.isAdmin() ) { 
 				Cart cart = new Cart(owner);
+				System.out.println(cart);
 				cartDao.create(cart);
 			}
 			else {
@@ -54,13 +56,36 @@ public class CartController {
 			}
 		} 
 		catch (Exception ex) 
-		{
+		{ Utils.logMethodName();
 			return Custom.getJsonError(Custom.CREATE_ERROR);
 		}
 		
 		return Custom.getJsonSuccess();
 	}
-
+	
+	/**
+	 * Create a new cart when a new user is created
+	 */	
+	/*
+	public static String createAfterUser( User owner)
+	{ Utils.logMethodName();
+		
+		try 
+		{
+			Cart cart = new Cart(owner);
+			System.out.println(cart);
+			cartDao.create(cart);		
+		} 
+		catch (Exception ex) 
+		{ Utils.logMethodName();
+			return Custom.getJsonError(Custom.CREATE_ERROR);
+		}
+		
+		return Custom.getJsonSuccess();
+	
+	}
+*/
+	
 	/**
 	 * Delete the cart
 	 */
@@ -291,6 +316,7 @@ public class CartController {
 	
 	@Autowired
 	private CartDao cartDao;
+	//private static CartDao cartDao;
 	
 	@Autowired
 	private ProductDao productDao;
